@@ -18,10 +18,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
-        'password',
+        'password'
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,5 +46,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * The project that belongs to the user.
+     */
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class);
+    }
+
+    public function timesheets()
+    {
+        return $this->hasMany(Timesheet::class);
     }
 }
