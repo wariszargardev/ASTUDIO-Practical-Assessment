@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+//        Access tokens that expire after one year (default expiration time)
+//        Passport::tokensExpireIn(now()->addDays(15));
+//        Passport::refreshTokensExpireIn(now()->addDays(30));
+//        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
     }
 }
