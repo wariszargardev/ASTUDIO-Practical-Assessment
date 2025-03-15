@@ -25,7 +25,13 @@ class AuthService extends BaseService
     public function register($request)
     {
         $request['password'] = Hash::make($request['password']);
-        return $this->authRepository->register($request);
+        $user = $this->authRepository->register($request);
+        $token = $user->createToken('AuthToken')->accessToken;
+
+        return [
+            'user' => $user,
+            'token' => $token,
+        ];
     }
 
     /**
