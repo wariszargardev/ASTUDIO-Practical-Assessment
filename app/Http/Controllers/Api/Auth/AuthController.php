@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
@@ -18,44 +19,59 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
+    /**
+     * Register a new user.
+     */
     public function register(UserRegistrationRequest $request)
     {
         try {
             $result = $this->authService->register($request->safe()->toArray());
-            return response()->json($result, 201);
+            Log::info("User registered successfully with email: {$request->email}");
+            return ApiResponse::successResponse($result, self::SUCCESS_MESSAGE, self::HTTP_CREATED);
         } catch (\Exception $e) {
             Log::error("Error registering user: {$e->getMessage()}");
-            return response()->json(['error' => $e->getMessage()], 400);
+            return ApiResponse::errorResponse($e->getMessage(), self::ERROR_STATUS, self::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * Log in an existing user.
+     */
     public function login(UserLoginRequest $request)
     {
         try {
             $result = $this->authService->login($request->safe()->toArray());
-            return response()->json($result, 201);
+            Log::info("User login successfully with email: {$request->email}");
+            return ApiResponse::successResponse($result, self::SUCCESS_MESSAGE, self::HTTP_OK);
         } catch (\Exception $e) {
             Log::error("Error login user: {$e->getMessage()}");
-            return response()->json(['error' => $e->getMessage()], 400);
+            return ApiResponse::errorResponse($e->getMessage(), self::ERROR_STATUS, self::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * Log out the authenticated user.
+     */
     public function logout(Request $request)
     {
         try {
             $result = $this->authService->logout($request);
             if ($result){
-                return response()->json(['message' => 'User logged out successfully'], 200);
+                return ApiResponse::successResponse([], self::LOGOUT_MESSAGE, self::HTTP_OK);
             }
-            return response()->json(['message' => 'User not logged in'], 400);
+            return ApiResponse::errorResponse( self::NOT_FOUND_MESSAGE, self::ERROR_STATUS , self::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             Log::error("Error logout user: {$e->getMessage()}");
-            return response()->json(['error' => $e->getMessage()], 400);
+            return ApiResponse::errorResponse($e->getMessage(), self::ERROR_STATUS, self::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * Get the authenticated user's profile.
+     */
     public function profile()
     {
-        return response()->json(auth()->user(), 200);
+        $user = auth()->user();
+        return ApiResponse::successResponse($user, self::SUCCESS_MESSAGE, self::HTTP_OK);
     }
 }
