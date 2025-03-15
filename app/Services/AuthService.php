@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repository\AuthRepository;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -32,15 +33,6 @@ class AuthService extends BaseService
      */
     public function login(array $data)
     {
-        $validator = Validator::make($data, [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
         if (!auth()->attempt($data)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
@@ -49,7 +41,6 @@ class AuthService extends BaseService
         $token = $user->createToken('AuthToken')->accessToken;
 
         return [
-            'user' => $user,
             'token' => $token,
         ];
     }
@@ -59,7 +50,11 @@ class AuthService extends BaseService
      */
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
-        return ['message' => 'Successfully logged out'];
+        $authUser= Auth::user();
+        if ($authUser) {
+            $authUser->token()->revoke();
+            return true;
+        }
+        return false;
     }
 }
