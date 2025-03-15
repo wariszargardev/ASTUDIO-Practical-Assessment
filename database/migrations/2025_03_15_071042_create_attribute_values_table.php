@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProjectStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('attribute_values', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->enum('status', [ProjectStatus::Active, ProjectStatus::Inactive, ProjectStatus::Completed])->default(ProjectStatus::Active);
-            $table->foreignId('created_by')->constrained(
-                table: 'users'
+            $table->foreignId('attribute_id')->constrained()->onDelete('cascade');
+            $table->foreignId('entity_id')->constrained(
+                table: 'projects'
             );
+            $table->text('value');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('attribute_values');
     }
 };
