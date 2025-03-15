@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)->group(function (){
@@ -15,4 +16,9 @@ Route::controller(AuthController::class)->group(function (){
     });
 });
 
+Route::apiResource('projects', ProjectController::class)->only(['index', 'show']);
+
+Route::middleware('auth:api')->group(function (){
+    Route::apiResource('projects', ProjectController::class)->except(['index', 'show', 'edit', 'create']);
+});
 

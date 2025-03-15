@@ -14,4 +14,13 @@ final class ProjectStatus extends Enum
     const Active = 'active';
     const Inactive = 'inactive';
     const Completed = 'completed';
+
+    public static function values(): array
+    {
+        return [
+            self::Active,
+            self::Inactive,
+            self::Completed,
+        ];
+    }
 }
