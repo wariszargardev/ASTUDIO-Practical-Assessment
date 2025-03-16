@@ -11,7 +11,7 @@ class Project extends Model
     /**
      * The user that belongs to the project.
      */
-    public function users(): BelongsToMany
+    public function users()
     {
         return $this->belongsToMany(User::class);
     }
@@ -38,7 +38,9 @@ class Project extends Model
             'id' => $this->id,
             'name' => $this->name,
             'status' => $this->status,
-            'created_by' => $this->user
+            'created_by' => $this->user,
+            'users' => $this->users,
+            'timesheets' => $this->timesheets,
         ];
     }
 }

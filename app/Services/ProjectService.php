@@ -21,7 +21,12 @@ class ProjectService extends BaseService
     public function create($data)
     {
         $user = auth()->user();
-        return $user->projectsCreatedByUser()->create($data);
+        $project = $user->projectsCreatedByUser()->create($data);
+
+        // If we want to assign the project to the user who created it
+        // Otherwise we can remove this line
+        $project->users()->attach($user->id);
+        return $project;
     }
 
     public function show($id)
@@ -52,5 +57,35 @@ class ProjectService extends BaseService
     {
         $user = auth()->user();
         return $user->projectsCreatedByUser()->get();
+    }
+
+    public function assign($projectId)
+    {
+        $project = $this->model->with('users')->find($projectId);
+        if (!$project) {
+            return false;
+        }
+        $user = auth()->user();
+        if (!$project->users()->where('user_id', $user->id)->exists()) {
+            $project->users()->attach($user->id);
+        }
+        // We project is already assigned to the user we can return other message
+        // But for now we are just returning the project
+        return $project->refresh();
+    }
+
+    public function unAssign($projectId)
+    {
+        $project = $this->model->with('users')->find($projectId);
+        if (!$project) {
+            return false;
+        }
+        $user = auth()->user();
+        if ($project->users()->where('user_id', $user->id)->exists()) {
+            $project->users()->detach($user->id);
+        }
+        // We project is not assigned to the user we can return other message
+        // But for now we are just returning the project
+        return $project->refresh();
     }
 }

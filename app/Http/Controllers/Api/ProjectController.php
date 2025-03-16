@@ -73,4 +73,22 @@ class ProjectController extends Controller
         }
         return ApiResponse::successResponse([], self::SUCCESS_MESSAGE ,self::NO_CONTENT);
     }
+
+    public function assign($project)
+    {
+        $response = $this->projectService->assign($project);
+        if (!$response) {
+            return ApiResponse::errorResponse(self::NOT_FOUND_MESSAGE, self::ERROR_STATUS, self::HTTP_NOT_FOUND);
+        }
+        return ApiResponse::successResponse($response, self::SUCCESS_MESSAGE, self::SUCCESS_STATUS, self::HTTP_CREATED);
+    }
+
+    public function unAssign($project)
+    {
+        $response = $this->projectService->unAssign($project);
+        if (!$response) {
+            return ApiResponse::errorResponse(self::NOT_FOUND_MESSAGE, self::ERROR_STATUS, self::HTTP_NOT_FOUND);
+        }
+        return ApiResponse::successResponse($response, self::SUCCESS_MESSAGE, self::SUCCESS_STATUS);
+    }
 }
