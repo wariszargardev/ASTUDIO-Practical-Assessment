@@ -6,16 +6,19 @@ use App\Helper\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Services\AttributeValueService;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     private ProjectService $projectService;
+    private AttributeValueService $attributeValueService;
 
-    public function __construct(ProjectService $projectService)
+    public function __construct(ProjectService $projectService, AttributeValueService $attributeValueService)
     {
         $this->projectService = $projectService;
+        $this->attributeValueService = $attributeValueService;
     }
 
     /**
@@ -33,8 +36,11 @@ class ProjectController extends Controller
      */
     public function store(ProjectCreateRequest $request)
     {
-        $response= $this->projectService->create($request->safe()->toArray());
-        return ApiResponse::successResponse($response, self::SUCCESS_MESSAGE, self::HTTP_CREATED);
+        $project= $this->projectService->create($request->safe()->toArray());
+
+        // Handling project attributes values
+        $this->attributeValueService->createOrUpdate($project, $request->safe()->toArray());
+        return ApiResponse::successResponse($project, self::SUCCESS_MESSAGE, self::HTTP_CREATED);
     }
 
     /**
@@ -55,11 +61,13 @@ class ProjectController extends Controller
      */
     public function update(ProjectUpdateRequest $request, string $id)
     {
-        $response = $this->projectService->update($request->safe()->toArray(), $id);
-        if (!$response) {
+        $project = $this->projectService->update($request->safe()->toArray(), $id);
+        if (!$project) {
             return ApiResponse::errorResponse(self::NOT_FOUND_MESSAGE . ' OR ' . self::NOT_BELONGS_TO_YOU, self::ERROR_STATUS, self::HTTP_NOT_FOUND);
         }
-        return ApiResponse::successResponse($response, self::SUCCESS_MESSAGE, self::HTTP_CREATED);
+        // Handling project attributes values
+        $this->attributeValueService->createOrUpdate($project, $request->safe()->toArray());
+        return ApiResponse::successResponse($project, self::SUCCESS_MESSAGE, self::HTTP_CREATED);
     }
 
     /**
@@ -67,6 +75,8 @@ class ProjectController extends Controller
      */
     public function destroy(string $id)
     {
+        return ApiResponse::successResponse([], "We will implement in  nearest future" ,self::NO_CONTENT);
+
         $response= $this->projectService->delete($id);
         if (!$response) {
             return ApiResponse::errorResponse(self::NOT_FOUND_MESSAGE . ' OR ' . self::NOT_BELONGS_TO_YOU, self::ERROR_STATUS, self::HTTP_NOT_FOUND);

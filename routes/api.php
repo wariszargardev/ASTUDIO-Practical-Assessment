@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AttributeController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TimeSheetController;
@@ -32,5 +33,10 @@ Route::middleware('auth:api')->group(function (){
     });
 
     Route::apiResource('timesheet', TimeSheetController::class);
+
+    // Attribute Management
+    Route::get('/attributes', [AttributeController::class, 'index']);
+    Route::post('/attributes', [AttributeController::class, 'store']);
+    Route::put('/attributes/{attribute}', [AttributeController::class, 'update']);
 });
 
