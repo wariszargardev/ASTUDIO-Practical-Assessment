@@ -14,6 +14,7 @@ abstract class Controller
     public const HTTP_FORBIDDEN = 403;
     public const HTTP_NOT_FOUND = 404;
     public const HTTP_INTERNAL_SERVER_ERROR = 500;
+    public  const NO_CONTENT = 204;
 
     // Status Keyword
     public const SUCCESS_STATUS = 'success';
@@ -25,5 +26,6 @@ abstract class Controller
     public const NOT_FOUND_MESSAGE = 'Resource not found';
     public const UNAUTHORIZED_MESSAGE = 'Unauthorized access';
     public const LOGOUT_MESSAGE = 'User logged out successfully';
+    public const NOT_BELONGS_TO_YOU = 'This resource does not belong to you';
 
 }

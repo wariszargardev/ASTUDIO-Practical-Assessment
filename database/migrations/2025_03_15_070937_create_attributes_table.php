@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AttributeTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('timesheets', function (Blueprint $table) {
+        Schema::create('attributes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->string('task_name');
-            $table->date('date');
-            $table->decimal('hours', 5, 2);
+            $table->string('name')->unique();
+            $table->enum('type', AttributeTypeEnum::values()); // Fetch enum values dynamically
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('timesheets');
+        Schema::dropIfExists('attributes');
     }
 };

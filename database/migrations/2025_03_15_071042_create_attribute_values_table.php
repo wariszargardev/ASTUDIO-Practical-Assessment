@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('timesheets', function (Blueprint $table) {
+        Schema::create('attribute_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->string('task_name');
-            $table->date('date');
-            $table->decimal('hours', 5, 2);
+            $table->foreignId('attribute_id')->constrained()->onDelete('cascade');
+            $table->foreignId('entity_id')->constrained(
+                table: 'projects'
+            );
+            $table->text('value');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('timesheets');
+        Schema::dropIfExists('attribute_values');
     }
 };

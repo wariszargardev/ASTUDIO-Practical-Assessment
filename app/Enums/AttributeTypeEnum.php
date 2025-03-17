@@ -9,18 +9,20 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class ProjectStatus extends Enum
+final class AttributeTypeEnum extends Enum
 {
-    const Active = 'active';
-    const Inactive = 'inactive';
-    const Completed = 'completed';
+    const TEXT = 'text';
+    const DATE = 'date';
+    const NUMBER = 'number';
+    const SELECT = 'select';
 
     public static function values(): array
     {
         return [
-            self::Active,
-            self::Inactive,
-            self::Completed,
+            self::TEXT,
+            self::DATE,
+            self::NUMBER,
+            self::SELECT
         ];
     }
 }

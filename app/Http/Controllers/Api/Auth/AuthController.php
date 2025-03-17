@@ -71,7 +71,11 @@ class AuthController extends Controller
      */
     public function profile()
     {
+        $data = [];
         $user = auth()->user();
-        return ApiResponse::successResponse($user, self::SUCCESS_MESSAGE, self::HTTP_OK);
+        $data['user'] = $user;
+        $data['projects'] = $user->projects;
+        $data['timesheets'] = $user->timesheets;
+        return ApiResponse::successResponse($data, self::SUCCESS_MESSAGE, self::HTTP_OK);
     }
 }

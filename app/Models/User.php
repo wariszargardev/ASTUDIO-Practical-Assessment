@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -36,6 +37,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = ['full_name'];
     /**
      * Get the attributes that should be cast.
      *
@@ -52,7 +54,7 @@ class User extends Authenticatable
     /**
      * The project that belongs to the user.
      */
-    public function projects(): BelongsToMany
+    public function projects()
     {
         return $this->belongsToMany(Project::class);
     }
@@ -62,7 +64,17 @@ class User extends Authenticatable
         return $this->hasMany(Timesheet::class);
     }
 
+    public function projectsCreatedByUser()
+    {
+        return $this->hasMany(Project::class, 'created_by', 'id');
+    }
 
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->first_name . ' ' . $this->last_name
+        );
+    }
     public function toArray()
     {
         return [
@@ -70,6 +82,7 @@ class User extends Authenticatable
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'email' => $this->email,
+            'name' => $this->full_name,
         ];
     }
 }
